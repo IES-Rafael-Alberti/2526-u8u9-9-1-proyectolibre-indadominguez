@@ -1,8 +1,8 @@
 plugins {
-    kotlin("jvm") version "2.3.0"
+    kotlin("jvm") version "2.0.21"
 }
 
-group = "org.iesra"
+group = "taskmanager"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -10,13 +10,14 @@ repositories {
 }
 
 dependencies {
+    implementation("com.h2database:h2:2.2.224")
     testImplementation(kotlin("test"))
-}
-
-kotlin {
-    jvmToolchain(21)
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+
+kotlin {
+    jvmToolchain(21)
 }

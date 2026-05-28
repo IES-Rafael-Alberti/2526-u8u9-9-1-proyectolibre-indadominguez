@@ -1,8 +1,8 @@
 # Solución del proyecto
 
-- **Proyecto:** <!-- Nombre del proyecto -->
-- **Alumno/a:** <!-- Nombre y apellidos -->
-- **Repositorio:** <!-- URL del repositorio -->
+- **Proyecto:** <!-- 2526_PRO_u9_proyecto-->
+- **Alumno/a:** <!-- Indalecio Domínguez Hita -->
+- **Repositorio:** <!-- https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez -->
 
 ## 1. Resumen del proyecto
 
