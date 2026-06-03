@@ -138,7 +138,7 @@ Debe explicarse qué fichero se usa, formato, contenido, clase responsable y com
 
 MongoDB debe usarse como persistencia NoSQL para información menos estructurada o histórica: logs, eventos, auditoría, comentarios, valoraciones, mensajes, configuración flexible o datos complementarios.
 
-Debe incluir conexión, al menos una colección, inserción, consulta, modificación o eliminación de documentos, y explicación del modelo de documentos.
+Debe incluir conexión, al menos una colección, inserción, consulta, modificación o eliminación de documentos, y explicación del model de documentos.
 
 ### Base de datos relacional
 
@@ -158,7 +158,7 @@ No se admiten consultas SQL construidas concatenando texto introducido por el us
 
 ## Arquitectura, diseño y librerías
 
-El proyecto debe separar modelo, lógica de negocio, acceso a ficheros, acceso a MongoDB, acceso SQL, validaciones e interfaz de usuario.
+El proyecto debe separar model, lógica de negocio, acceso a ficheros, acceso a MongoDB, acceso SQL, validaciones e interfaz de usuario.
 
 Además, debe explicar al menos dos principios SOLID aplicados, por ejemplo:
 
@@ -290,7 +290,7 @@ Durante la defensa, el alumno o alumna debe poder:
 - Explicar la temática.
 - Ejecutar la aplicación.
 - Mostrar el código principal.
-- Explicar el modelo de clases.
+- Explicar el model de clases.
 - Mostrar ficheros, MongoDB y SQL.
 - Justificar decisiones de diseño.
 - Responder preguntas sobre su propio código.
