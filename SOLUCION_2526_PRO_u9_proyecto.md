@@ -1,28 +1,46 @@
 # Solución del proyecto
 
-- **Proyecto:** <!-- Gestor de Gastos Personales -->
-- **Alumno/a:** <!-- Indalecio Domínguez Hita -->
-- **Repositorio:** <!-- https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez -->
+- **Proyecto:** Gestor de Gastos Personales 
+- **Alumno/a:** Indalecio Domínguez Hita 
+- **Repositorio:** https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez 
 
 ## 1. Resumen del proyecto
 
-- **Problema que resuelve:** <!-- Esta aplicación permite registrar, consultar y analizar gastos de forma sencilla, ayudando a mejorar el control económico personal. -->
-- **Usuarios principales:** <!-- Usuarios individuales que quieran controlar sus finanzas personales,estudiantes o trabajadores que deseen organizar sus gastos, cualquier persona interesada en llevar un registro de ingresos y gastos-->
-- **Funcionalidades principales:** <!-- 
- - Alta de gastos
- - Consulta de gastos
- - Modificación de gastos
- - Eliminación de gastos
- - Gestión de categorías
- - Exportación de gastos a CSV
- - Registro de eventos y logs
- - Validación de datos (fechas, cantidades, texto)
- - Consulta de historial de acciones -->
-- **Entidades principales:** <!-- 
- - Gasto (principal): id, fecha, cantidad, descripción, categoría
- - Categoria: id, nombre
- - LogEvento: fecha, tipo, descripción -->
-- **Estructura del proyecto:** <!-- src/main/kotlin/ ├── app/ -> punto de entrada ├── model/ -> clases del dominio ├── service/ -> lógica de negocio ├── repository/ -> acceso a ficheros, MongoDB y SQL ├── validator/ -> validaciones ├── exception/ -> excepciones propias -->
+- **Problema que resuelve:** Esta aplicación permite registrar, consultar y analizar gastos de forma sencilla, ayudando a mejorar el control económico personal.
+
+
+- **Usuarios principales:** Usuarios individuales que quieran controlar sus finanzas personales,estudiantes o trabajadores que deseen organizar sus gastos, cualquier persona interesada en llevar un registro de ingresos y gastos.
+
+
+- **Funcionalidades principales:** 
+  - Alta de gastos
+  - Consulta de gastos
+  - Modificación de gastos
+  - Eliminación de gastos
+  - Gestión de categorías
+  - Exportación de gastos a CSV
+  - Registro de eventos y logs
+  - Validación de datos (fechas, cantidades, texto)
+  - Consulta de historial de acciones 
+  
+
+- **Entidades principales:**  
+  - Gasto (principal): id, fecha, cantidad, descripción, categoría
+  - Categoria: id, nombre
+  - LogEvento: fecha, tipo, descripción 
+  
+
+- **Estructura del proyecto:** 
+```text
+src/main/kotlin/
+├── app/          -> punto de entrada
+├── model/        -> clases del dominio
+├── service/      -> lógica de negocio
+├── repository/   -> acceso a ficheros, MongoDB y SQL
+├── validator/    -> validaciones
+├── exception/    -> excepciones propias
+└── util/         -> utilidades
+```
 
 ## 2. Instalación y ejecución
 
