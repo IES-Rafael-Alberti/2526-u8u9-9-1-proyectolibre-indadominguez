@@ -36,3 +36,59 @@ java.sql.SQLClientInfoException: Client info name 'ApplicationName' not supporte
 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
 	at java.base/java.lang.Thread.run(Thread.java:1583)
+2026-06-04 18:14:55.125679+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "CATEGORIA" no encontrada
+Table "CATEGORIA" not found; SQL statement:
+SELECT * FROM CATEGORIA [42102-224]
+2026-06-04 18:14:55.132748+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "GASTO" no encontrada
+Table "GASTO" not found; SQL statement:
+SELECT * FROM GASTO [42102-224]
+2026-06-04 18:16:42.489154+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "CATEGORIA" no encontrada
+Table "CATEGORIA" not found; SQL statement:
+SELECT * FROM CATEGORIA [42102-224]
+2026-06-04 18:16:42.491154+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "GASTO" no encontrada
+Table "GASTO" not found; SQL statement:
+SELECT * FROM GASTO [42102-224]
+2026-06-04 18:16:43.066664+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "CATEGORIA" no encontrada
+Table "CATEGORIA" not found; SQL statement:
+SELECT * FROM CATEGORIA [42102-224]
+2026-06-04 18:16:43.067669+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "GASTO" no encontrada
+Table "GASTO" not found; SQL statement:
+SELECT * FROM GASTO [42102-224]
+2026-06-04 18:16:43.318990+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "CATEGORIA" no encontrada
+Table "CATEGORIA" not found; SQL statement:
+SELECT * FROM CATEGORIA [42102-224]
+2026-06-04 18:16:43.320132+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "GASTO" no encontrada
+Table "GASTO" not found; SQL statement:
+SELECT * FROM GASTO [42102-224]
+2026-06-04 18:17:03.982776+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "CATEGORIA" no encontrada
+Table "CATEGORIA" not found; SQL statement:
+SELECT * FROM CATEGORIA [42102-224]
+2026-06-04 18:17:03.983653+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "GASTO" no encontrada
+Table "GASTO" not found; SQL statement:
+SELECT * FROM GASTO: [42102-224]
+2026-06-04 18:17:33.264462+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "SELECT * FROM GASTOS[*]:"
+Syntax error in SQL statement "SELECT * FROM GASTOS[*]:"; SQL statement:
+SELECT * FROM GASTOS: [42000-224]
+2026-06-04 18:17:39.982224+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "SELECT * FROM GASTOS[*]:"
+Syntax error in SQL statement "SELECT * FROM GASTOS[*]:"; SQL statement:
+SELECT * FROM GASTOS: [42000-224]
+2026-06-04 18:17:40.663712+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "SELECT * FROM GASTOS[*]:"
+Syntax error in SQL statement "SELECT * FROM GASTOS[*]:"; SQL statement:
+SELECT * FROM GASTOS: [42000-224]
+2026-06-04 18:17:40.900506+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "SELECT * FROM GASTOS[*]:"
+Syntax error in SQL statement "SELECT * FROM GASTOS[*]:"; SQL statement:
+SELECT * FROM GASTOS: [42000-224]
