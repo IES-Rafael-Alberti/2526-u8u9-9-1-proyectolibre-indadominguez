@@ -104,7 +104,7 @@ src/main/kotlin/
 
 ## 6. Pruebas y evidencias
 
-- **Pruebas realizadas:** <!-- Manuales o automatizadas -->
+- **Pruebas realizadas:** Prueba del menu en consola ![MENU_CONSOLA](img_1.png)
 - **Datos de prueba:** <!-- Qué datos se usaron -->
 - **Evidencia de ejecución:** <!-- Salida de consola o captura -->
 - **Evidencia de ficheros:** <!-- Fichero generado/leído -->
@@ -182,7 +182,9 @@ Completa cada criterio con una respuesta breve (Por ejemplo, si habla de clases 
 
 ### 9.14. Pruebas y evidencias
 
-<!-- Pruebas, datos, salidas, capturas si procede, ficheros generados, MongoDB y SQL. -->
+Salida por consola del menú antes de añadir memoria al programa
+
+![FOTO_CONSOLA](img.png)
 
 ### 9.15. Refactorización y código limpio
 

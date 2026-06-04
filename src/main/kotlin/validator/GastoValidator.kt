@@ -19,7 +19,7 @@ object GastoValidator {
             errores.add("El monto debe ser positivo")
         }
 
-        if (gasto.monto * 100 % 1 != 0.0) {
+        if (gasto.monto.toString().substringAfter(".").length > 2) {
             errores.add("El monto debe tener como máximo 2 decimales")
         }
 

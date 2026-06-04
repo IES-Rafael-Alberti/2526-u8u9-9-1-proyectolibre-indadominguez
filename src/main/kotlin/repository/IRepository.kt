@@ -5,5 +5,5 @@ interface IRepository<T, ID> {
     fun findById(id: ID): T?
     fun findAll(): List<T>
     fun update(entity: T): T
-    fun delete(id: ID): Boolean
+    fun delete(id: ID)
 }
