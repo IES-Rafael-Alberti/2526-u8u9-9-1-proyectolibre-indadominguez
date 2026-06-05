@@ -12,8 +12,19 @@ class LogService(
 
     fun registrar(tipo: String, mensaje: String): LogEvento {
         val log = LogEvento(tipo = tipo, mensaje = mensaje)
-        logMongoRepository.save(log)
-        logFileRepository.guardar(log, logFilePath)
+
+        try {
+            logMongoRepository.save(log)
+        } catch (e: Exception) {
+            println("Mongo log error: ${e.message}")
+        }
+
+        try {
+            logFileRepository.guardar(log, logFilePath)
+        } catch (e: Exception) {
+            println("File log error: ${e.message}")
+        }
+
         return log
     }
 

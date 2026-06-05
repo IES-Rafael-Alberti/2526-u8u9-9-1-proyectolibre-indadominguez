@@ -7,11 +7,13 @@ fun main() {
     val server = Server.createWebServer("-web", "-webAllowOthers").start()
     println("H2 Web disponible en: ${server.url}")
 
-    DataBase.getConnection().use { }
+    try {
+        DataBase.initDatabase()
 
-    Consola().run()
+        Consola().run()
 
-    // MUY IMPORTANTE
-    server.stop()
-    println("Servidor H2 detenido")
+    } finally {
+        server.stop()
+        println("Servidor H2 detenido")
+    }
 }

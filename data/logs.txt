@@ -1,0 +1,3 @@
+[2026-06-05T12:43:45.930201300] [INFO] Categoría creada ID=5
+[2026-06-05T12:44:16.471691] [INFO] Gasto creado ID=5
+[2026-06-05T12:44:23.563137900] [INFO] Gasto eliminado ID=5

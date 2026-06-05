@@ -27,7 +27,7 @@ object DataBase {
         }
     }
 
-    private fun initDatabase() {
+    fun initDatabase() {
         getConnection().use { connection ->
 
             connection.createStatement().use { statement ->

@@ -25,7 +25,7 @@ class Consola {
     private val logService = LogService(
         LogRepositoryMongo(),
         LogFileRepository(),
-        "logs.txt"
+        "data/logs.txt"
     )
 
     fun run() {

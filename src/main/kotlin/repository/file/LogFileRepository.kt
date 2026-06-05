@@ -10,14 +10,23 @@ class LogFileRepository {
 
     fun guardar(log: LogEvento, ruta: String) {
         try {
-            Files.createDirectories(Paths.get(ruta).parent)
+
+            val path = Paths.get(ruta)
+
+            val parent = path.parent
+            if (parent != null) {
+                Files.createDirectories(parent)
+            }
+
             val linea = "[${log.fecha}] [${log.tipo}] ${log.mensaje}${System.lineSeparator()}"
+
             Files.writeString(
-                Paths.get(ruta),
+                path,
                 linea,
                 StandardOpenOption.CREATE,
                 StandardOpenOption.APPEND
             )
+
         } catch (e: Exception) {
             throw PersistenciaException("Error al guardar log en archivo $ruta", e)
         }
