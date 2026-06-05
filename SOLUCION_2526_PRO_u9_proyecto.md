@@ -104,9 +104,13 @@ src/main/kotlin/
 
 ## 6. Pruebas y evidencias
 
-- **Pruebas realizadas:** Prueba del menu en consola ![MENU_CONSOLA](img_1.png)
+- **Pruebas realizadas:** Consola funcionando, acceso configurado a Mongo.
 - **Datos de prueba:** <!-- Qué datos se usaron -->
-- **Evidencia de ejecución:** <!-- Salida de consola o captura -->
+- **Evidencia de ejecución:** 
+
+[MENU_CONSOLA](img_1.png)
+![ACCESO A MONGO](img_2.png)
+
 - **Evidencia de ficheros:** <!-- Fichero generado/leído -->
 - **Evidencia de MongoDB:** <!-- Inserción/consulta -->
 - **Evidencia de SQL:** <!-- CRUD realizado -->

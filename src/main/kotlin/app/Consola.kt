@@ -6,6 +6,9 @@ import repository.sql.GastoRepositorySQL
 import service.CategoriaService
 import service.GastoService
 import java.time.LocalDate
+import repository.file.LogFileRepository
+import service.LogService
+import repository.mongo.LogRepositoryMongo
 
 class Consola {
 
@@ -17,6 +20,12 @@ class Consola {
 
     private val gastoService = GastoService(
         GastoRepositorySQL(connection)
+    )
+
+    private val logService = LogService(
+        LogRepositoryMongo(),
+        LogFileRepository(),
+        "logs.txt"
     )
 
     fun run() {
@@ -31,7 +40,8 @@ class Consola {
                 3 -> crearGasto()
                 4 -> listarGastos()
                 5 -> eliminarGasto()
-                6 -> salir = true
+                6 -> verLogs()
+                7 -> salir = true
                 else -> println("Opción inválida")
             }
         }
@@ -46,7 +56,8 @@ class Consola {
         println("3. Crear gasto")
         println("4. Listar gastos")
         println("5. Eliminar gasto")
-        println("6. Salir")
+        println("6. Ver logs")
+        println("7. Salir")
         print("Selecciona una opción: ")
     }
 
@@ -63,10 +74,13 @@ class Consola {
             val descripcion = readln()
 
             val categoria = categoriaService.registrar(nombre, descripcion)
-            println("✔ Categoría creada: $categoria")
+            println("Categoría creada: $categoria")
+
+            logService.registrar("INFO", "Categoría creada ID=${categoria.id}")
 
         } catch (e: Exception) {
             println("Error: ${e.message}")
+            logService.registrar("ERROR", "Error al crear categoría")
         }
     }
 
@@ -101,10 +115,13 @@ class Consola {
                 categoriaId
             )
 
-            println("✔ Gasto creado: $gasto")
+            println("Gasto creado: $gasto")
+
+            logService.registrar("INFO", "Gasto creado ID=${gasto.id}")
 
         } catch (e: Exception) {
             println("Error: ${e.message}")
+            logService.registrar("ERROR", "Error al crear gasto")
         }
     }
 
@@ -125,10 +142,23 @@ class Consola {
 
             gastoService.eliminar(id)
 
-            println("✔ Gasto eliminado")
+            println("Gasto eliminado")
+
+            logService.registrar("INFO", "Gasto eliminado ID=$id")
 
         } catch (e: Exception) {
             println("Error: ${e.message}")
+            logService.registrar("ERROR", "Error al eliminar gasto")
+        }
+    }
+
+    private fun verLogs() {
+        val logs = logService.listarTodos()
+
+        if (logs.isEmpty()) {
+            println("No hay logs")
+        } else {
+            logs.forEach { println(it) }
         }
     }
 }
