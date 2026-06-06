@@ -92,3 +92,7 @@ SELECT * FROM GASTOS: [42000-224]
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "SELECT * FROM GASTOS[*]:"
 Syntax error in SQL statement "SELECT * FROM GASTOS[*]:"; SQL statement:
 SELECT * FROM GASTOS: [42000-224]
+2026-06-06 17:44:52.795818+02:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "DATOS" no encontrada
+Table "DATOS" not found; SQL statement:
+SELECT * FROM DATOS [42102-224]

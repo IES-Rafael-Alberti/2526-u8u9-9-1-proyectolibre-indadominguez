@@ -169,182 +169,413 @@ src/main/kotlin/
   - Patrón Singleton:
     - DataBase y MongoManager se implementan como objetos (object en Kotlin).
     - Garantiza una única instancia de conexión.
-    
+      https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/c0d5b6aa4c3a71155eb5b983e649cfd4eba379df/src/main/kotlin/repository/sql/Database.kt#L7-L69
+      https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/c0d5b6aa4c3a71155eb5b983e649cfd4eba379df/src/main/kotlin/repository/mongo/MongoManager.kt#L7-L24
 
   - Arquitectura en capas:
     - Separación clara entre modelo, repositorio, servicio y presentación.
     - Facilita mantenimiento, pruebas y escalabilidad.
 
+
 ## 4. Persistencia
 
 ### Ficheros
 
-- **Ficheros usados:** <!-- Nombre y ruta -->
-- **Formato y contenido:** <!-- CSV, JSON, TXT... -->
-- **Lectura/escritura:** <!-- Qué operaciones realiza -->
-- **Clase responsable:** <!-- Enlace al código -->
-- **Errores controlados:** <!-- Qué ocurre si falla -->
+- **Ficheros usados:** 
+
+  - data/logs.txt
+  
+- **Formato y contenido:** 
+
+  - Formato: TXT (texto plano).
+  - Cada línea representa un log con el siguiente formato:
+    - [fecha] [tipo] mensaje
+  - Ejemplo:
+    - [2026-06-05T12:43:45.930] [INFO] Categoría creada ID=5
+
+- **Lectura/escritura:** 
+
+  - Escritura:
+    - Se añaden nuevas líneas al fichero usando Files.writeString con las opciones CREATE y APPEND.
+    - Se crea automáticamente el fichero si no existe.
+  - Lectura:
+    - Se leen todas las líneas del fichero mediante Files.readAllLines.
+    - Se devuelven como una lista de strings.
+
+- **Clase responsable:** 
+
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/c0d5b6aa4c3a71155eb5b983e649cfd4eba379df/src/main/kotlin/repository/file/LogFileRepository.kt#L9-L47
+  
+- **Errores controlados:** 
+
+  - Se capturan excepciones durante la lectura y escritura del fichero.
+  - En caso de error, se lanza una excepción propia PersistenciaException.
+  - Esto evita que la aplicación falle y permite gestionar los errores de forma controlada.
+  - Ejemplo:
+    - throw PersistenciaException("Error al guardar log en archivo $ruta", e)
+
 
 ### MongoDB
 
-- **Base de datos:** <!-- Nombre -->
-- **Colecciones:** <!-- Nombre y uso -->
+- **Base de datos:** 
+
+  expensetracker
+
+- **Colecciones:** 
+
+  - logeventos → almacena los logs generados por la aplicación (acciones, errores, operaciones realizadas).
+
 - **Documento de ejemplo:**
 
 ```json
-{
-  "campo": "valor"
-}
+{ "_id": "ff08b50a-58e4-4483-b7eb-7dae888c3639", 
+  "tipo": "INFO", 
+  "mensaje": "Categoría creada ID=5", 
+  "fecha": "2026-06-05T12:43:45.930" }
 ```
 
-- **Operaciones realizadas:** <!-- Insertar, consultar, modificar, borrar -->
-- **Clase responsable:** <!-- Enlace al código -->
+- **Operaciones realizadas:** 
+
+  - Insertar:
+    - Se insertan logs automáticamente al realizar acciones como crear categorías o gastos.
+  - Consultar:
+    - Se recuperan todos los logs desde la consola.
+  - Filtrar:
+    - Se pueden consultar logs por tipo (INFO, ERROR).
+    - No se realizan operaciones de actualización o borrado, ya que los logs se mantienen como historial inmutable.
+  
+- **Clase responsable:** 
+
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/c0d5b6aa4c3a71155eb5b983e649cfd4eba379df/src/main/kotlin/repository/mongo/LogRepositoryMongo.kt#L8-L48
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/c0d5b6aa4c3a71155eb5b983e649cfd4eba379df/src/main/kotlin/repository/mongo/MongoManager.kt#L7-L24
+
 
 ### Base de datos relacional
 
-- **SGBD utilizado:** <!-- H2, SQLite, MySQL... -->
-- **Script SQL:** <!-- Ruta del script -->
-- **Tablas y relaciones:** <!-- Resumen -->
-- **Operaciones CRUD:** <!-- Qué entidades cubren -->
-- **Consultas parametrizadas:** <!-- Enlace a ejemplo en código -->
-- **Gestión de conexión y cierre:** <!-- Enlace al código -->
+- **SGBD utilizado:** 
+
+  - Se utiliza H2 Database ya que es la base de datos relacional que siempre he usado al ser muy ligera.
+  
+- **Script SQL:**
+
+  - No se utiliza un fichero .sql externo.
+  - La creación de tablas se realiza automáticamente en el código en:
+    - repository/sql/DataBase.kt
+      Método: initDatabase() 
+    
+- **Tablas y relaciones:** 
+
+  - CATEGORIAS
+    - id (PK)
+    - nombre (único)
+    - descripcion
+  - GASTOS
+    - id (PK)
+    - descripcion
+    - monto
+    - fecha
+    - categoria_id (FK)
+  - Relación:
+    - Un gasto pertenece a una categoría (N:1)
+    - Se define una clave foránea con ON DELETE CASCADE
+  
+- **Operaciones CRUD:**
+
+  - Categoria
+    - Crear → save
+    - Leer → findAll, findById
+    - Actualizar → update
+    - Eliminar → delete
+  - Gasto
+    - Crear → save
+    - Leer → findAll, findById
+    - Eliminar → delete
+  - Implementadas en:
+    - CategoriaRepositorySQL.kt
+    - GastoRepositorySQL.kt
+
+- **Consultas parametrizadas:** 
+
+  - https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/c0d5b6aa4c3a71155eb5b983e649cfd4eba379df/src/main/kotlin/repository/sql/CategoriaRepositorySQL.kt#L28-L44
+  
+- **Gestión de conexión y cierre:** 
+
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/c0d5b6aa4c3a71155eb5b983e649cfd4eba379df/src/main/kotlin/repository/sql/Database.kt#L22-L33
+  - Se utiliza use {} para cerrar automáticamente recursos como Connection, Statement y ResultSet.
+  - Esto evita fugas de memoria y asegura el correcto cierre de recursos.
+  
 
 ## 5. Validaciones y errores
 
-- **Expresiones regulares:** <!-- Dato, regex, ejemplo válido/no válido, enlace -->
-- **Excepciones controladas:** <!-- Tipo de error y respuesta del programa -->
-- **Excepciones propias:** <!-- Si existen, indicar clase y motivo -->
+- **Expresiones regulares:** 
+
+  - Datos: Nombre de la categoría.
+  - Regex: private val NOMBRE_REGEX = Regex("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,100}$")
+  - Ejemplo válido: "Comida", "Transporte diario"
+  - Ejemplo no válido: "", "123@", "@@@"
+    https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/c0d5b6aa4c3a71155eb5b983e649cfd4eba379df/src/main/kotlin/validator/CategoriaValidator.kt#L7-L28
+  
+- **Excepciones controladas:** 
+
+  - Tipo de error:
+    - Entrada de datos incorrecta (números, fechas)
+    - Errores de base de datos
+    - Errores de ficheros
+  - Respuesta del programa:
+    - Se capturan mediante try-catch
+    - Se muestra un mensaje de error por consola
+    - La aplicación continúa ejecutándose
+      https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/c0d5b6aa4c3a71155eb5b983e649cfd4eba379df/src/main/kotlin/repository/file/ExportacionCsvRepository.kt#L10-L26
+
 
 ## 6. Pruebas y evidencias
 
-- **Pruebas realizadas:** Consola funcionando, acceso configurado a Mongo.
-- **Datos de prueba:** <!-- Qué datos se usaron -->
+- **Pruebas realizadas:** 
+
+  - ![CONSOLA_FUNCIONANDO](img_3.png)
+  
+- **Datos de prueba:** 
+
+  - ![CATEGORIAS_GASTOS](img_4.png)
+
 - **Evidencia de ejecución:** 
 
-[MENU_CONSOLA](img_1.png)
-![ACCESO A MONGO](img_2.png)
+  - [MENU_CONSOLA](img_1.png)
+  - ![ACCESO A MONGO](img_2.png)
 
-- **Evidencia de ficheros:** <!-- Fichero generado/leído -->
-- **Evidencia de MongoDB:** <!-- Inserción/consulta -->
-- **Evidencia de SQL:** <!-- CRUD realizado -->
+- **Evidencia de ficheros:** 
+
+  - Se genera el fichero:
+    - data/logs.txt
+    - Contiene los logs de la aplicación en formato texto plano. 
+    https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/c0d5b6aa4c3a71155eb5b983e649cfd4eba379df/data/logs.txt#L1-L4
+    
+- **Evidencia de MongoDB:** 
+
+  - ![LOGS_MONGO](img_5.png)
+  
+- **Evidencia de SQL:** 
+
+  - ![CATEGORIAS_GASTOS](img_4.png)
+
 
 ## 7. Refactorización, documentación y Git
 
-- **Refactorizaciones aplicadas:** <!-- Qué se mejoró y por qué -->
-- **Código limpio:** <!-- Ejemplos concretos -->
-- **Documentación:** <!-- KDoc, Dokka, README, diagramas... -->
-- **Control de versiones:** <!-- Commits, ramas, conflictos si los hubo -->
+- **Refactorizaciones aplicadas:**
+
+  - Sustitución de repositorios en memoria por implementaciones SQL y Mongo, manteniendo la misma interfaz.
+  
+- **Código limpio:**
+
+  - Uso de nombres descriptivos en variables y funciones (crearCategoria, listarGastos, eliminarGasto).
+  - Métodos con una única responsabilidad (por ejemplo, registrar en servicios).
+  - Uso de try-catch para controlar errores sin romper la ejecución.
+  - Uso de List en lugar de MutableList en servicios para garantizar inmutabilidad.
+  - Separación clara entre entrada de datos (consola) y lógica de negocio (servicios).
+  
+- **Documentación:** 
+
+  - Este propio README con explicación del proyecto, estructura, instalación y funcionamiento.
+  
+- **Control de versiones:** 
+
+  - Uso de Git mediante repositorio en GitHub.
+  - Commits frecuentes para registrar avances del desarrollo.
+
 
 ## 8. Problemas encontrados y soluciones
 
 | Problema | Solución aplicada | Enlace o evidencia |
 |----------|-------------------|--------------------|
-| <!-- Problema --> | <!-- Solución --> | <!-- Enlace --> |
+| Error al guardar logs en fichero (NullPointerException por la ruta) | Se cambió la ruta a data/logs.txt y se creó el directorio automáticamente con Files.createDirectories | https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/src/main/kotlin/repository/file/LogFileRepository.kt#L9-L19 |
+
 
 ## 9. Respuestas a los criterios de evaluación
 
 Completa cada criterio con una respuesta breve (Por ejemplo, si habla de clases puedes listar las mas importantes, y entrar en detalle en alguna), técnica y con enlaces al código.
 
+
 ### 9.1. Diseño general
 
-<!-- Temática, problema, entidades, funcionalidades, estructura y justificación. -->
+- Aplicación de consola para gestión de gastos personales. Entidades: Gasto, Categoria y LogEvento. Arquitectura en capas (app, service, repository, model) que separa presentación, lógica y persistencia.
+
 
 ### 9.2. Clases y objetos
 
-<!-- Clases, propiedades, métodos, constructores, objetos instanciados y enlaces al código. -->
+- Clases principales: Gasto, Categoria, LogEvento.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/src/main/kotlin/model/Categoria.kt#L3-L7
+
+- Servicios: GastoService, CategoriaService, LogService.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/src/main/kotlin/service/ExportacionService.kt#L6-L11
+
+- Repositorios: SQL y Mongo.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/src/main/kotlin/repository/IRepository.kt#L3-L9
+
+- Se instancian en la consola (Consola.kt).
+
 
 ### 9.3. Encapsulación y visibilidad
 
-<!-- Propiedades públicas/privadas, validaciones, métodos de modificación y decisiones. -->
+- Propiedades privadas en servicios y repositorios, para mayor encapsulación.
+- Acceso mediante métodos (registrar, listar, eliminar).
+- Validaciones antes de modificar datos.
+
 
 ### 9.4. Colecciones
 
-<!-- Tipo de colección, información almacenada, motivo de elección y enlace al código. -->
+- Uso de List para devolver datos (findAll).
+- Permite inmutabilidad y seguridad en la lógica de negocio.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/src/main/kotlin/service/CategoriaService.kt#L24-L26
+
 
 ### 9.5. Genéricos
 
-<!-- Elemento genérico creado, problema que resuelve, ventaja y enlace al código. -->
+- Uso de interfaces genéricas como ILogRepository.
+- Permite cambiar implementación (Mongo, fichero) sin modificar servicios.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/src/main/kotlin/repository/ILogRepository.kt#L5-L7
+
 
 ### 9.6. Herencia, interfaces o clases abstractas
 
-<!-- Relación entre clases/interfaces, ventaja, polimorfismo si existe y enlace al código. -->
+- Interfaces como ICategoriaRepository, IGastoRepository, ILogRepository.
+- Permiten polimorfismo y desacoplamiento entre capas.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/src/main/kotlin/repository/IGastoRepository.kt#L5-L8
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/src/main/kotlin/repository/ICategoriaRepository.kt#L5-L7
+
 
 ### 9.7. Expresiones regulares
 
-<!-- Dato validado, expresión regular, ejemplo válido, ejemplo no válido y enlace al código. -->
+- Validación de nombre de categoría con regex:
+- ^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,100}$
+- Ejemplo válido: "Comida"
+- No válido: "123@"
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/src/main/kotlin/validator/CategoriaValidator.kt#L7-L9
+
 
 ### 9.8. Ficheros
 
-<!-- Ficheros, operaciones de lectura/escritura, formato, errores controlados y enlace al código. -->
+- Fichero data/logs.txt.
+- Lectura y escritura con Files.writeString y Files.readAllLines.
+- Control de errores con excepciones.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/data/logs.txt#L1-L4
+
 
 ### 9.9. MongoDB
 
-<!-- Base de datos, colecciones, documentos, operaciones realizadas y enlace al código. -->
+- Base de datos: expensetracker.
+- Colección: logeventos.
+- Operaciones: insertar (save) y consultar (findAll).
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/src/main/kotlin/repository/mongo/LogRepositoryMongo.kt#L8-L48
+
 
 ### 9.10. Base de datos relacional
 
-<!-- SGBD, tablas, relaciones, script SQL, CRUD, conexión, cierre de recursos, consultas parametrizadas y enlace al código. -->
+- SGBD: H2.
+- Tablas: CATEGORIAS y GASTOS (relación N:1).
+- CRUD completo.
+- Consultas con PreparedStatement.
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/src/main/kotlin/repository/sql/CategoriaRepositorySQL.kt#L8-L107
+
 
 ### 9.11. Excepciones
 
-<!-- Errores controlados, excepciones propias, comportamiento ante error, ejemplos y enlace al código. -->
+- Control con try-catch.
+  - Excepciones propias:
+    - ValidacionException
+    - PersistenciaException
+    - Evitan que la aplicación se detenga.
+      https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/src/main/kotlin/repository/file/ExportacionCsvRepository.kt#L10-L26
+    
 
 ### 9.12. SOLID y buenas prácticas
 
-<!-- Principios aplicados, clases donde aparecen, problema que evitan, mejora aportada y enlace al código. -->
+- SRP: cada clase tiene una responsabilidad (Service, Repository).
+- DIP: servicios dependen de interfaces, no implementaciones.
+- Mejora mantenimiento y escalabilidad.
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/b43e703ff60fb4d28bc2bedcaf8fe1cb9b656a86/src/main/kotlin/service/CategoriaService.kt#L8
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/b43e703ff60fb4d28bc2bedcaf8fe1cb9b656a86/src/main/kotlin/repository/file/LogFileRepository.kt#L9
+
 
 ### 9.13. Librerías externas
 
-<!-- Nombre, finalidad, configuración, uso en código y motivo. -->
+MongoDB Driver (mongodb-driver-sync) → conexión con Mongo Atlas.
+H2 Database → base de datos relacional embebida.
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/build.gradle.kts#L11-L14
+
 
 ### 9.14. Pruebas y evidencias
 
-Salida por consola del menú antes de añadir memoria al programa
+- Salida por consola del menú antes de añadir memoria al programa
+  
+  ![FOTO_CONSOLA](img.png)
+  ![LOGS_MONGO](img_5.png)
+  ![CATEGORIAS_GASTOS](img_4.png)
 
-![FOTO_CONSOLA](img.png)
 
 ### 9.15. Refactorización y código limpio
 
-<!-- Técnicas aplicadas, mejoras conseguidas, ejemplos y enlaces. -->
+- Separación en capas.
+- Nombres claros en métodos.
+- Eliminación de código duplicado.
+- Control de errores mejorado en LogService.
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/src/main/kotlin/service/LogService.kt#L7-L42
+
 
 ### 9.16. Patrones de diseño
 
-<!-- Patrón aplicado, ubicación, problema que resuelve, ventaja y enlace al código. -->
+- Repository → acceso a datos desacoplado
+- DAO → repositorios SQL
+- Singleton → DataBase, MongoManager
+- Arquitectura en capas
+  https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/6d94dcb699d49dc9a0690c87e42feb1367122845/src/main/kotlin/repository/mongo/MongoManager.kt#L7-L24
+
 
 ### 9.17. Documentación
 
-<!-- Herramientas, partes documentadas, formato, ejemplo y enlace. -->
+La documentacion se encuentra en [SOLUCION_2526_PRO_u9_proyecto.md](SOLUCION_2526_PRO_u9_proyecto.md)
+
 
 ### 9.18. Control de versiones
 
-<!-- Git, commits, ramas, conflictos si existen, repositorio e historial. -->
+Uso de Git y GitHub.
+Commits frecuentes y evolución del proyecto documentada.
+Repositorio:
+https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez
+
 
 ## 10. Conclusiones
 
-- **Qué he aprendido:** <!-- Resumen -->
-- **Qué mejoraría si tuviera más tiempo:** <!-- Mejoras realistas -->
-- **Decisión técnica más importante:** <!-- Decisión y motivo -->
+- **Qué he aprendido:**
+
+  - He aprendido que los proyectos deben de hacerse con paciencia y teniendo claro que van a surgir fallos.
+  
+- **Qué mejoraría si tuviera más tiempo:**
+
+  - Implementar interfaz gráfica (GUI) en lugar de consola.
+  - Añadir edición de gastos y categorías desde el menú.
+  - Mejorar validaciones (más campos y reglas).
+  - Añadir tests automatizados.
+  - Optimizar consultas y añadir filtros (por fecha, categoría, etc.).
+  
+- **Decisión técnica más importante:** 
+
+  - Creo que la respuesta es un fácil ya que la decisión técnica más importante sin duda es:
+    - Separar la aplicación en capas (app, service, repository).
+      - Permite desacoplar la lógica de negocio del acceso a datos.
+      - Gracias a esto, se ha podido usar SQL, MongoDB y ficheros sin cambiar la lógica principal.
+
 
 ## 11. Autoevaluación
 
 Indica en cada criterio el nivel o puntuación que consideras que has alcanzado. Usa la escala de la guía de evaluación: `0`, `2.5`, `5`, `7.5` o `10`. Justifica siempre la puntuación con evidencias concretas: clases, funciones, commits, capturas, documentación o enlaces al código.
 
+
 ### 11.1. Programación
 
 | Criterio | Puntuación/Nivel | Justificación de la puntuación |
-|----------|------------------|--------------------------------|
-| Completitud de requisitos mínimos | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Justifica el cumplimiento de POO, colecciones, genéricos, herencia/interfaces, regex, excepciones, SOLID, librerías, pruebas y evidencias. --> |
-| Acceso a ficheros | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Indica ficheros usados, formato, operaciones de lectura/escritura, clase responsable y control de errores. --> |
-| Integración de MongoDB | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Indica base de datos, colecciones, documentos, operaciones y clase responsable. --> |
-| Base de datos relacional y operaciones CRUD | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Indica SGBD, tablas, relaciones, script SQL, CRUD, conexión, cierre de recursos y consultas parametrizadas. --> |
-| Preguntas de evaluación de Programación | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Justifica si las respuestas de Programación están completas, son técnicas e incluyen enlaces y evidencias. --> |
-
-### 11.2. Entornos de Desarrollo
-
-| Criterio | Puntuación/Nivel | Justificación de la puntuación |
-|----------|------------------|--------------------------------|
-| Refactorización y código limpio | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Refactorizaciones, técnicas aplicadas, mejoras y ejemplos. --> |
-| Patrones de diseño | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Patrón usado, ubicación, problema resuelto y ventaja. --> |
-| Documentación | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Herramientas, partes documentadas, formato y ejemplo. --> |
-| Control de versiones | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Commits, ramas, repositorio, conflictos si existen e historial. --> |
-| Preguntas de evaluación de Entornos de Desarrollo | <!-- 0 / 2.5 / 5 / 7.5 / 10 --> | <!-- Justifica si las respuestas de Entornos están completas, son técnicas e incluyen enlaces y evidencias. --> |
+|----------|------|--------------------------------|
+| Completitud de requisitos mínimos | 7.5  | Se cumplen todos los requisitos: uso de POO (modelos y servicios), colecciones (List), interfaces (repositorios), expresiones regulares (validación de categorías), excepciones propias (ValidacionException, PersistenciaException), principios SOLID (SRP y DIP), uso de librerías externas (MongoDB y H2), y evidencias de funcionamiento (capturas, logs, consola). |
+| Acceso a ficheros | 10   | Uso de fichero data/logs.txt en formato TXT. Se implementa lectura y escritura mediante Files.writeString y Files.readAllLines en LogFileRepository. Se controlan errores con try-catch y PersistenciaException.|
+| Integración de MongoDB | 7.5  | Base de datos expensetracker con colección logeventos. Se realizan operaciones de inserción (save) y consulta (findAll). Implementado en LogRepositoryMongo y gestionado por MongoManager. Conexión mediante MongoDB Atlas.|
+| Base de datos relacional y operaciones CRUD | 7.5  | Uso de H2 con tablas CATEGORIAS y GASTOS (relación N:1). CRUD completo implementado en repositorios SQL. Uso de PreparedStatement, gestión de conexión con DataBase y cierre de recursos con use.|
+| Preguntas de evaluación de Programación | 10   | Todas las respuestas están completas, son técnicas y están justificadas. Incluyen referencias al código, ejemplos reales del proyecto y evidencias de funcionamiento. |
