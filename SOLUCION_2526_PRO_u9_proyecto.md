@@ -50,11 +50,13 @@ src/main/kotlin/
 ```
 
 - **Requisitos previos:** 
+
   - Tener instalado JDK 21 o superior.
   - Tener conexión a internet para acceder a MongoDB Atlas.
   - Tener configurada una variable de entorno para la contraseña de MongoDB.
 
 - **Configuración necesaria:** 
+
   - La base de datos relacional se configura automáticamente usando H2, creando un fichero en:
     data/expensetracker.mv.db
   - La base de datos NoSQL (MongoDB) se conecta mediante la URI definida en:
@@ -78,8 +80,30 @@ src/main/kotlin/
 
 ## 3. Diseño y model
 
-- **Clases principales:** <!-- Clase -> responsabilidad -->
-- **Relaciones importantes:** <!-- Herencia, interfaces, composición -->
+- **Clases principales:** 
+
+  - Gasto → Representa un gasto individual con descripción, monto, fecha y categoría asociada.
+  - Categoria → Representa una categoría de gasto con nombre y descripción.
+  - DataBase → Gestiona la conexión y creación de la base de datos H2.
+
+
+- **Relaciones importantes:**
+
+  - Interfaces (polimorfismo):
+    - IRepository<T, ID> define operaciones CRUD genéricas.
+    - ICategoriaRepository y IGastoRepository extienden esta interfaz.
+    - Permite cambiar la implementación (memoria, SQL) sin modificar la lógica de negocio.
+  
+  - Composición:
+    - Los servicios (CategoriaService, GastoService) dependen de repositorios.
+    - LogService depende de dos repositorios (Mongo + fichero).
+    
+  - Separación por capas:
+    - model → datos
+    - repository → acceso a datos
+    - service → lógica de negocio
+    - app → interfaz de usuario (consola)
+  
 - **Genéricos usados:** <!-- Clase/interfaz/función y motivo -->
 - **Colecciones usadas:** <!-- Tipo, uso y justificación -->
 - **Principios SOLID aplicados:** <!-- Al menos dos, con enlace al código -->
