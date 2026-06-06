@@ -55,6 +55,7 @@ src/main/kotlin/
   - Tener conexión a internet para acceder a MongoDB Atlas.
   - Tener configurada una variable de entorno para la contraseña de MongoDB.
 
+
 - **Configuración necesaria:** 
 
   - La base de datos relacional se configura automáticamente usando H2, creando un fichero en:
@@ -64,6 +65,7 @@ src/main/kotlin/
   - El fichero de logs se genera automáticamente en:
     data/logs.txt
   
+
 - **Datos de prueba incluidos:** 
 
   - No se incluyen datos iniciales predefinidos, pero la aplicación permite crear datos fácilmente desde la consola:
@@ -78,14 +80,19 @@ src/main/kotlin/
     - MongoDB → logs
     - Fichero → logs en texto
 
+
 ## 3. Diseño y model
 
 - **Clases principales:** 
 
   - Gasto → Representa un gasto individual con descripción, monto, fecha y categoría asociada.
+    https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/b43e703ff60fb4d28bc2bedcaf8fe1cb9b656a86/src/main/kotlin/model/Gasto.kt#L1-L11
+  
   - Categoria → Representa una categoría de gasto con nombre y descripción.
-  - DataBase → Gestiona la conexión y creación de la base de datos H2.
+    https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/b43e703ff60fb4d28bc2bedcaf8fe1cb9b656a86/src/main/kotlin/model/Categoria.kt#L1-L7
 
+  - DataBase → Gestiona la conexión y creación de la base de datos H2.
+    https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/b43e703ff60fb4d28bc2bedcaf8fe1cb9b656a86/src/main/kotlin/repository/sql/Database.kt#L7-L69
 
 - **Relaciones importantes:**
 
@@ -93,21 +100,80 @@ src/main/kotlin/
     - IRepository<T, ID> define operaciones CRUD genéricas.
     - ICategoriaRepository y IGastoRepository extienden esta interfaz.
     - Permite cambiar la implementación (memoria, SQL) sin modificar la lógica de negocio.
-  
+      https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/b43e703ff60fb4d28bc2bedcaf8fe1cb9b656a86/src/main/kotlin/repository/IRepository.kt#L1-L9
+
   - Composición:
     - Los servicios (CategoriaService, GastoService) dependen de repositorios.
     - LogService depende de dos repositorios (Mongo + fichero).
-    
+      https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/b43e703ff60fb4d28bc2bedcaf8fe1cb9b656a86/src/main/kotlin/service/GastoService.kt#L9-L49
+      CategoriaService y GastoService tienen implementado todas las operaciones CRUD, aunque no todas se utilicen, debe de estar todo preparado para mejoras.  
+
   - Separación por capas:
     - model → datos
     - repository → acceso a datos
     - service → lógica de negocio
     - app → interfaz de usuario (consola)
   
-- **Genéricos usados:** <!-- Clase/interfaz/función y motivo -->
+
+- **Genéricos usados:** 
+
+  - Se utiliza la interfaz genérica:
+  IRepository<T, ID>
+  - Permite reutilizar operaciones CRUD para distintas entidades (Gasto, Categoria, LogEvento).
+  - Mejora la reutilización del código y reduce duplicación.
+    https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/b43e703ff60fb4d28bc2bedcaf8fe1cb9b656a86/src/main/kotlin/repository/IRepository.kt#L1-L9
+
+
 - **Colecciones usadas:** <!-- Tipo, uso y justificación -->
-- **Principios SOLID aplicados:** <!-- Al menos dos, con enlace al código -->
-- **Patrones de diseño:** <!-- Patrón, problema que resuelve y enlace -->
+
+  - MutableList
+    - Usada en repositorios en memoria (CategoriaRepositoryMemory, GastoRepositoryMemory).
+    - Permite almacenar, buscar, actualizar y eliminar elementos fácilmente.
+      https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/b43e703ff60fb4d28bc2bedcaf8fe1cb9b656a86/src/main/kotlin/repository/memory/CategoriaRepositoryMemory.kt#L6-L8
+    
+  - List
+    - Usada como retorno en consultas (findAll, filtros).
+    - Permite trabajar con colecciones inmutables de forma segura.
+      https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/b43e703ff60fb4d28bc2bedcaf8fe1cb9b656a86/src/main/kotlin/service/CategoriaService.kt#L24-L26
+      Ejemplo dentro de CategoriaService
+    
+      
+- **Principios SOLID aplicados:** 
+
+  - S (Single Responsibility Principle):
+    - Cada clase tiene una única responsabilidad.
+    - Ejemplo:
+      - GastoService → lógica de negocio
+      - GastoRepositorySQL → acceso a datos
+      - GastoValidator → validaciones
+        https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/b43e703ff60fb4d28bc2bedcaf8fe1cb9b656a86/src/main/kotlin/repository/file/LogFileRepository.kt#L9
+        
+  - D (Dependency Inversion Principle):
+    - Los servicios dependen de interfaces (IGastoRepository, ICategoriaRepository) y no de implementaciones concretas.
+    - Permite cambiar fácilmente entre repositorio en memoria y SQL sin modificar la lógica.
+      https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/b43e703ff60fb4d28bc2bedcaf8fe1cb9b656a86/src/main/kotlin/service/CategoriaService.kt#L8
+
+
+- **Patrones de diseño:** 
+
+  - Patrón Repository:
+    - Separa la lógica de acceso a datos de la lógica de negocio.
+    - Implementado mediante IRepository y sus implementaciones (SQL, memoria, Mongo).
+      https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/b43e703ff60fb4d28bc2bedcaf8fe1cb9b656a86/src/main/kotlin/repository/IRepository.kt#L3-L9
+      https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/b43e703ff60fb4d28bc2bedcaf8fe1cb9b656a86/src/main/kotlin/repository/ICategoriaRepository.kt#L5-L7
+
+  - Patrón DAO (Data Access Object):
+    - Clases como GastoRepositorySQL encapsulan el acceso a la base de datos.
+      https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/b43e703ff60fb4d28bc2bedcaf8fe1cb9b656a86/src/main/kotlin/repository/sql/GastoRepositorySQL.kt#L9-L155      
+
+  - Patrón Singleton:
+    - DataBase y MongoManager se implementan como objetos (object en Kotlin).
+    - Garantiza una única instancia de conexión.
+    
+
+  - Arquitectura en capas:
+    - Separación clara entre modelo, repositorio, servicio y presentación.
+    - Facilita mantenimiento, pruebas y escalabilidad.
 
 ## 4. Persistencia
 
