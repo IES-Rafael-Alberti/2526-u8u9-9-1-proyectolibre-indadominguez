@@ -49,9 +49,32 @@ src/main/kotlin/
 ./gradlew run
 ```
 
-- **Requisitos previos:** <!-- JDK, MongoDB, SGBD, variables de entorno -->
-- **Configuración necesaria:** <!-- Ficheros, puertos, datos de prueba -->
-- **Datos de prueba incluidos:** <!-- Dónde están y cómo se usan -->
+- **Requisitos previos:** 
+  - Tener instalado JDK 21 o superior.
+  - Tener conexión a internet para acceder a MongoDB Atlas.
+  - Tener configurada una variable de entorno para la contraseña de MongoDB.
+
+- **Configuración necesaria:** 
+  - La base de datos relacional se configura automáticamente usando H2, creando un fichero en:
+    data/expensetracker.mv.db
+  - La base de datos NoSQL (MongoDB) se conecta mediante la URI definida en:
+    repository/mongo/MongoManager.kt
+  - El fichero de logs se genera automáticamente en:
+    data/logs.txt
+  
+- **Datos de prueba incluidos:** 
+
+  - No se incluyen datos iniciales predefinidos, pero la aplicación permite crear datos fácilmente desde la consola:
+
+    - Crear categorías
+    - Crear gastos asociados
+    - Generar logs automáticamente
+
+  - Estos datos se almacenan en:
+
+    - H2 → gastos y categorías
+    - MongoDB → logs
+    - Fichero → logs en texto
 
 ## 3. Diseño y model
 
