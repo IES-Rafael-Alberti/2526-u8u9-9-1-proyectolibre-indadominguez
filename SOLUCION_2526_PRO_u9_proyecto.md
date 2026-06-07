@@ -327,6 +327,18 @@ src/main/kotlin/
     - La aplicación continúa ejecutándose
       https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/c0d5b6aa4c3a71155eb5b983e649cfd4eba379df/src/main/kotlin/repository/file/ExportacionCsvRepository.kt#L10-L26
 
+- **Excepciones propias:**
+
+  - ValidacionException: se utiliza para errores de lógica de negocio.
+    - Por ejemplo, cuando se intenta crear una categoría con un nombre duplicado o cuando los datos no cumplen las validaciones.
+    - Se lanza principalmente desde la capa de servicios, como en CategoriaService.
+      https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/2fe87c5a6b03322631bedf9fd96e82d016912be3/src/main/kotlin/service/CategoriaService.kt#L14-L16
+
+  - PersistenciaException: se utiliza para errores relacionados con el acceso a datos.
+    - Por ejemplo, cuando falla la escritura o lectura de logs en fichero.
+    - Se lanza en la capa de repositorio, concretamente en LogFileRepository.
+      https://github.com/IES-Rafael-Alberti/2526-u8u9-9-1-proyectolibre-indadominguez/blob/2fe87c5a6b03322631bedf9fd96e82d016912be3/src/main/kotlin/repository/file/LogFileRepository.kt#L30-L32
+
 
 ## 6. Pruebas y evidencias
 
