@@ -1,22 +1,18 @@
 plugins {
-    kotlin("jvm") version "2.3.0"
+    kotlin("jvm") version "2.0.21"
+    id("application")
 }
 
-group = "org.iesra"
+group = "taskmanager"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
+repositories { mavenCentral() }
 
 dependencies {
-    testImplementation(kotlin("test"))
+    implementation("com.h2database:h2:2.2.224")
+    implementation("org.mongodb:mongodb-driver-sync:5.3.1")
 }
 
-kotlin {
-    jvmToolchain(21)
-}
+application { mainClass.set("app.MainKt") }
 
-tasks.test {
-    useJUnitPlatform()
-}
+kotlin { jvmToolchain(21) }
